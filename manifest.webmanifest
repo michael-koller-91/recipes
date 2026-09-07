@@ -1,0 +1,17 @@
+{
+  "name": "Recipes",
+  "short_name": "Recipes",
+  "description": "recipes",
+  "scope": "/recipes/",
+  "start_url": "/recipes/",
+  "background_color": "#1a1a1a",
+  "theme_color": "#1a1a1a",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "/recipes/img/icon.png",
+      "type": "image/png",
+      "sizes": "700x700"
+    }
+  ]
+}

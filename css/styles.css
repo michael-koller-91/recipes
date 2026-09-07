@@ -1,0 +1,77 @@
+:root {
+    --bg: #ffffff;
+    --text: #333333;
+    --link: #3672c9;
+    --button-bg: #ffffff;
+    --button-text: #333333;
+    --input-bg: #ffffff;
+    --input-text: #333333;
+    --muted: #999999;
+    color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #1a1a1a;
+        --text: #e0e0e0;
+        --link: #7eb4ff;
+        --button-bg: #2d2d2d;
+        --button-text: #e0e0e0;
+        --input-bg: #2d2d2d;
+        --input-text: #e0e0e0;
+        --muted: #888888;
+        color-scheme: dark;
+    }
+}
+
+html[data-theme="dark"] {
+    --bg: #1a1a1a;
+    --text: #e0e0e0;
+    --link: #7eb4ff;
+    --button-bg: #2d2d2d;
+    --button-text: #e0e0e0;
+    --input-bg: #2d2d2d;
+    --input-text: #e0e0e0;
+    --muted: #888888;
+    color-scheme: dark;
+}
+
+html[data-theme="light"] {
+    --bg: #ffffff;
+    --text: #333333;
+    --link: #3672c9;
+    --button-bg: #ffffff;
+    --button-text: #333333;
+    --input-bg: #ffffff;
+    --input-text: #333333;
+    --muted: #999999;
+    color-scheme: light;
+}
+
+body {
+    font-family: 'Courier New', Courier, monospace;
+    color: var(--text);
+    background-color: var(--bg);
+    margin: 0 auto;
+    padding: 2em;
+    max-width: 480px;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+h1 {
+    font-size: 2.5em;
+    font-weight: normal;
+    margin: 0;
+    padding: 0;
+}
+
+#version {
+    margin-top: auto;
+    font-size: 1em;
+    color: var(--muted);
+    text-align: center;
+    padding-bottom: 1em;
+}

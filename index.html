@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>recipes</title>
+  <link rel="canonical" href="https://michael-koller-91.github.io/recipes/" />
+  <link rel="manifest" href="/recipes/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/recipes/img/icon.jpg">
+  <meta name="apple-mobile-web-app-title" content="recipes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+  <h1>Recipes</h1>
+  <script>
+    if (navigator.serviceWorker) {
+      navigator.serviceWorker.register(
+        '/recipes/sw.js',
+        { scope: '/recipes/' }
+      )
+    }
+  </script>
+
+  <footer id="version"></footer>
+
+  <script src="js/version.js"></script>
+  <script>
+    document.getElementById('version').textContent = 'v' + APP_VERSION;
+  </script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>
