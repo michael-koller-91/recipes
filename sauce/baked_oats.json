@@ -1,0 +1,75 @@
+{
+  "title": "Baked Oats",
+  "rows": [
+    [
+      {
+        "tag": "th",
+        "class": "hcentered",
+        "colspan": 3,
+        "text": "Baked Oats"
+      }
+    ],
+    [
+      {
+        "tag": "td",
+        "class": "hcentered",
+        "colspan": 3,
+        "text": "kleine Auflaufform (optional einfetten)"
+      }
+    ],
+    [
+      {
+        "tag": "td",
+        "text": "1 Banane"
+      },
+      {
+        "tag": "td",
+        "class": "hcentered",
+        "text": "zerdrücken"
+      },
+      {
+        "tag": "td",
+        "class": "hcentered",
+        "rowspan": 5,
+        "text": "vermischen"
+      }
+    ],
+    [
+      {
+        "tag": "td",
+        "text": "1 TL Cashewmus"
+      },
+      {
+        "tag": "td",
+        "rowspan": 4,
+        "text": ""
+      }
+    ],
+    [
+      {
+        "tag": "td",
+        "text": "50 g Haferflocken"
+      }
+    ],
+    [
+      {
+        "tag": "td",
+        "text": "150 ml Milch"
+      }
+    ],
+    [
+      {
+        "tag": "td",
+        "text": "1 Prise Salz"
+      }
+    ],
+    [
+      {
+        "tag": "td",
+        "class": "hcentered",
+        "colspan": 3,
+        "text": "20 Minuten Heißluftfritteuse bei 160 °C"
+      }
+    ]
+  ]
+}
