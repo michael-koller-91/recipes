@@ -75,3 +75,17 @@ h1 {
     text-align: center;
     padding-bottom: 1em;
 }
+
+.hcentered {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.recipe-table {
+    border-collapse: collapse;
+}
+
+.recipe-table td {
+    border: 1px solid black;
+    padding: 8px;
+}
