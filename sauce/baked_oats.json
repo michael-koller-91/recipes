@@ -20,6 +20,7 @@
     [
       {
         "tag": "td",
+        "scale": true,
         "text": "1 Banane"
       },
       {
@@ -37,6 +38,7 @@
     [
       {
         "tag": "td",
+        "scale": true,
         "text": "1 TL Cashewmus"
       },
       {
@@ -48,18 +50,21 @@
     [
       {
         "tag": "td",
+        "scale": true,
         "text": "50 g Haferflocken"
       }
     ],
     [
       {
         "tag": "td",
+        "scale": true,
         "text": "150 ml Milch"
       }
     ],
     [
       {
         "tag": "td",
+        "scale": true,
         "text": "1 Prise Salz"
       }
     ],

@@ -111,6 +111,20 @@ h1 {
     text-decoration: underline;
 }
 
+#factor-row {
+    margin-bottom: 1em;
+    font-size: 1em;
+}
+
+#factor {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    border: 1px solid black;
+    padding: 4px 8px;
+    width: 6em;
+}
+
 #back-button {
     font-family: 'Courier New', Courier, monospace;
     font-size: 1em;

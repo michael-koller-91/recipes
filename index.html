@@ -16,7 +16,7 @@
 
 <body>
 
-  <h1>Recipes</h1>
+  <h1>Rezepte</h1>
   <script>
     if (navigator.serviceWorker) {
       navigator.serviceWorker.register(
@@ -27,7 +27,11 @@
   </script>
 
   <div id="recipe-list"></div>
-  <button id="back-button" style="display: none;">← Back</button>
+  <button id="back-button" style="display: none;">← Zurück</button>
+  <div id="factor-row" style="display: none;">
+    <label for="factor">Faktor</label>
+    <input id="factor" type="number" step="0.1" min="0.1" value="1">
+  </div>
   <table class="recipe-table" id="recipe-table" style="display: none;"></table>
 
   <footer id="version"></footer>

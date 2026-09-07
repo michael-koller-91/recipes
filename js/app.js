@@ -2,9 +2,50 @@
     const list = document.getElementById('recipe-list');
     const table = document.getElementById('recipe-table');
     const button = document.getElementById('back-button');
-    if (!list || !table || !button) return;
+    const factorInput = document.getElementById('factor');
+    const factorRow = document.getElementById('factor-row');
+    if (!list || !table || !button || !factorInput || !factorRow) return;
+
+    let baseRows = [];
+
+    function multiply(text, factor) {
+        const match = text.match(/(\d+(?:[.,]\d+)?)/);
+        if (!match) return text;
+        const num = parseFloat(match[1].replace(',', '.'));
+        if (isNaN(num)) return text;
+        const scaled = Math.round(num * factor * 100) / 100;
+        const scaledStr = scaled % 1 === 0 ? String(Math.round(scaled)) : String(scaled);
+        return text.replace(match[1], scaledStr);
+    }
+
+    function renderRecipe(data) {
+        baseRows = data.rows;
+        factorInput.value = 1;
+        factorRow.style.display = '';
+        table.style.display = '';
+        list.style.display = 'none';
+        button.style.display = '';
+        applyFactor();
+    }
+
+    function applyFactor() {
+        const factor = parseFloat(factorInput.value) || 1;
+        table.innerHTML = '';
+        baseRows.forEach(function (row) {
+            const tr = document.createElement('tr');
+            row.forEach(function (cell) {
+                const el = buildCell(cell);
+                if (cell.scale) {
+                    el.textContent = multiply(cell.text || '', factor);
+                }
+                tr.appendChild(el);
+            });
+            table.appendChild(tr);
+        });
+    }
 
     button.addEventListener('click', showList);
+    factorInput.addEventListener('input', applyFactor);
 
     function buildCell(cell) {
         const el = document.createElement(cell.tag || 'td');
@@ -17,22 +58,9 @@
 
     function showList() {
         table.style.display = 'none';
+        factorRow.style.display = 'none';
         list.style.display = '';
         button.style.display = 'none';
-    }
-
-    function renderRecipe(data) {
-        table.innerHTML = '';
-        data.rows.forEach(function (row) {
-            const tr = document.createElement('tr');
-            row.forEach(function (cell) {
-                tr.appendChild(buildCell(cell));
-            });
-            table.appendChild(tr);
-        });
-        table.style.display = '';
-        list.style.display = 'none';
-        button.style.display = '';
     }
 
     function showRecipe(name) {
