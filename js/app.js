@@ -1,7 +1,10 @@
 (function () {
     const list = document.getElementById('recipe-list');
     const table = document.getElementById('recipe-table');
-    if (!list || !table) return;
+    const button = document.getElementById('back-button');
+    if (!list || !table || !button) return;
+
+    button.addEventListener('click', showList);
 
     function buildCell(cell) {
         const el = document.createElement(cell.tag || 'td');
@@ -10,6 +13,12 @@
         if (cell.rowspan) el.setAttribute('rowspan', cell.rowspan);
         el.textContent = cell.text || '';
         return el;
+    }
+
+    function showList() {
+        table.style.display = 'none';
+        list.style.display = '';
+        button.style.display = 'none';
     }
 
     function renderRecipe(data) {
@@ -23,6 +32,7 @@
         });
         table.style.display = '';
         list.style.display = 'none';
+        button.style.display = '';
     }
 
     function showRecipe(name) {

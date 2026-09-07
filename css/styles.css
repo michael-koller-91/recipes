@@ -110,3 +110,19 @@ h1 {
 #recipe-list a:hover {
     text-decoration: underline;
 }
+
+#back-button {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1em;
+    color: var(--link);
+    background-color: var(--button-bg);
+    border: 1px solid var(--link);
+    padding: 4px 12px;
+    cursor: pointer;
+    margin-bottom: 1em;
+}
+
+#back-button:hover {
+    background-color: var(--link);
+    color: var(--button-text);
+}
