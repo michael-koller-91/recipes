@@ -26,6 +26,7 @@
     }
   </script>
 
+  <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">🌙</button>
   <div id="recipe-list"></div>
   <button id="back-button" style="display: none;">← zurück</button>
   <div id="factor-row" style="display: none;">
@@ -39,6 +40,28 @@
   <script src="js/version.js"></script>
   <script>
     document.getElementById('version').textContent = 'v' + APP_VERSION;
+  </script>
+  <script>
+    (function () {
+      var toggle = document.getElementById('theme-toggle');
+      if (!toggle) return;
+      var stored = localStorage.getItem('theme');
+      if (stored === 'dark' || stored === 'light') {
+        document.documentElement.setAttribute('data-theme', stored);
+      }
+      updateLabel();
+      toggle.addEventListener('click', function () {
+        var current = document.documentElement.getAttribute('data-theme') || 'light';
+        var next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        updateLabel();
+      });
+      function updateLabel() {
+        var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+        toggle.textContent = dark ? '☀️' : '🌙';
+      }
+    })();
   </script>
   <script src="js/app.js"></script>
 </body>
