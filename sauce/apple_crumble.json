@@ -1,0 +1,109 @@
+{
+  "title": "Apple Crumble",
+  "rows": [
+    [
+      {
+        "tag": "th",
+        "class": "hcentered",
+        "colspan": 3,
+        "text": "Apple Crumble"
+      }
+    ],
+    [
+      {
+        "tag": "td",
+        "class": "hcentered",
+        "colspan": 3,
+        "text": "Ofen vorheizen beginnen: 180 °C Umluft"
+      }
+    ],
+    [
+      {
+        "tag": "td",
+        "class": "hcentered",
+        "colspan": 3,
+        "text": "Auflaufform einfetten"
+      }
+    ],
+    [
+      {
+        "tag": "td",
+        "scale": true,
+        "text": "4 Äpfel (ca. 1 kg)"
+      },
+      {
+        "tag": "td",
+        "class": "hcentered",
+        "text": "würfeln"
+      },
+      {
+        "tag": "td",
+        "class": "hcentered",
+        "rowspan": 3,
+        "text": "in Auflaufform durchmengen"
+      }
+    ],
+    [
+      {
+        "tag": "td",
+        "text": "etw. Zimt"
+      },
+      {
+        "tag": "td",
+        "rowspan": 2,
+        "text": ""
+      }
+    ],
+    [
+      {
+        "tag": "td",
+        "scale": true,
+        "text": "1 Pck. Vanillinzucker"
+      }
+    ],
+    [
+      {
+        "tag": "td",
+        "scale": true,
+        "text": "160 g Mehl"
+      },
+      {
+        "tag": "td",
+        "class": "hcentered",
+        "rowspan": 3,
+        "colspan": 2,
+        "text": "in einer Schüssel zu Streuseln kneten"
+      }
+    ],
+    [
+      {
+        "tag": "td",
+        "scale": true,
+        "text": "60 g Zucker"
+      }
+    ],
+    [
+      {
+        "tag": "td",
+        "scale": true,
+        "text": "100 g Margarine"
+      }
+    ],
+    [
+      {
+        "tag": "td",
+        "class": "hcentered",
+        "colspan": 3,
+        "text": "Streusel über Apfelwürfel verteilen (nicht durchmengen)"
+      }
+    ],
+    [
+      {
+        "tag": "td",
+        "class": "hcentered",
+        "colspan": 3,
+        "text": "25-35 Minuten Umluft bei 180 °C"
+      }
+    ]
+  ]
+}
