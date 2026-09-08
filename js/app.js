@@ -76,11 +76,13 @@
         fetch('sauce/index.json')
             .then(function (res) { return res.json(); })
             .then(function (data) {
-                data.recipes.forEach(function (name) {
+                data.recipes.forEach(function (entry) {
+                    const name = typeof entry === 'string' ? entry : entry.name;
+                    const title = typeof entry === 'string' ? entry : entry.title;
                     const li = document.createElement('li');
                     const a = document.createElement('a');
                     a.href = '#' + encodeURIComponent(name);
-                    a.textContent = name;
+                    a.textContent = title;
                     a.addEventListener('click', function (e) {
                         e.preventDefault();
                         showRecipe(name);

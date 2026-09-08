@@ -1,5 +1,8 @@
 {
   "recipes": [
-    "baked_oats"
+    {
+      "name": "baked_oats",
+      "title": "Baked Oats"
+    }
   ]
 }
