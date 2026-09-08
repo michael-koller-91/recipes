@@ -9,13 +9,12 @@
     let baseRows = [];
 
     function multiply(text, factor) {
-        const match = text.match(/(\d+(?:[.,]\d+)?)/);
-        if (!match) return text;
-        const num = parseFloat(match[1].replace(',', '.'));
-        if (isNaN(num)) return text;
-        const scaled = Math.round(num * factor * 100) / 100;
-        const scaledStr = scaled % 1 === 0 ? String(Math.round(scaled)) : String(scaled);
-        return text.replace(match[1], scaledStr);
+        return text.replace(/(\d+(?:[.,]\d+)?)/g, function (m) {
+            const num = parseFloat(m.replace(',', '.'));
+            if (isNaN(num)) return m;
+            const scaled = Math.round(num * factor * 100) / 100;
+            return scaled % 1 === 0 ? String(Math.round(scaled)) : String(scaled);
+        });
     }
 
     function renderRecipe(data) {
