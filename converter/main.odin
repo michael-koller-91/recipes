@@ -28,6 +28,7 @@ Token :: struct {
 }
 
 Cell :: struct {
+	render:  bool,
 	scale:   bool,
 	colspan: int,
 	rowspan: int,
@@ -178,11 +179,11 @@ main :: proc() {
 		}
 	}
 
-	/* Arrange tokens into a list of (2D) sub-tables */
-	tables: [dynamic][dynamic][dynamic]Token
-	append(&tables, make([dynamic][dynamic]Token))
+	/* Convert Token into Cell and arrange into a list of (2D) sub-tables */
+	tables: [dynamic][dynamic][dynamic]Cell
+	append(&tables, make([dynamic][dynamic]Cell))
 	subtable := &tables[len(tables) - 1]
-	append(subtable, make([dynamic]Token))
+	append(subtable, make([dynamic]Cell))
 	curr_row := &subtable[len(subtable) - 1]
 	for token, i in tokens {
 		if i + 1 < len(tokens) {
@@ -195,62 +196,65 @@ main :: proc() {
 		if token.type == .EOL {
 			if next_token.type != .HSep {
 				// Start a new row
-				append(subtable, make([dynamic]Token))
+				append(subtable, make([dynamic]Cell))
 				curr_row = &subtable[len(subtable) - 1]
 			}
 		} else if token.type == .HSep {
 			// Start a new subtable
-			append(&tables, make([dynamic][dynamic]Token))
+			append(&tables, make([dynamic][dynamic]Cell))
 			subtable = &tables[len(tables) - 1]
 			// Start a new row
-			append(subtable, make([dynamic]Token))
+			append(subtable, make([dynamic]Cell))
 			curr_row = &subtable[len(subtable) - 1]
 		} else {
-			append(curr_row, token)
+			cell := Cell {
+				render  = true,
+				scale   = token.type == .Ingredient,
+				colspan = 1,
+				rowspan = 1,
+				class   = "hcentered",
+				tag     = "td",
+				text    = strings.clone(token.word),
+			}
+			append(curr_row, cell)
 		}
 	}
 
-	// for subtable, i in tables {
-	// 	fmt.println()
-	// 	fmt.printfln("subtable %v", i)
-	// 	for row, j in subtable {
-	// 		fmt.printfln("  row %v", j)
-	// 		for col, k in row {
-	// 			fmt.printfln("    col %v", k)
-	// 			fmt.printfln("      %v", col)
-	// 		}
-	// 	}
-	// }
+	// Make sure the number of elements in each row of a given subtable is the same
+	for subtable, i in tables {
+		n_cols := len(subtable[0])
+		for row in subtable {
+			if len(row) != n_cols {
+				fmt.printfln("Subtable %v:", i)
+				for row, j in subtable {
+					fmt.printfln("  row %v", j)
+					for col, k in row {
+						fmt.printfln("    col %v", k)
+						fmt.printfln("      %v", col)
+					}
+				}
+				panic("All rows in above subtable need to have the same number of columns!")
+			}
+		}
+	}
+
+	// TODO: NEXT: loop for-columns, for-rows and check if vertical merging is necessary
+	for subtable, i in tables {
+		fmt.println()
+		fmt.printfln("subtable %v", i)
+		for row, j in subtable {
+			fmt.printfln("  row %v", j)
+			for col, k in row {
+				fmt.printfln("    col %v", k)
+				fmt.printfln("      %v", col)
+			}
+		}
+	}
+	assert(1 == 2)
 
 
 	/* Convert tokens to cells */
 	json_rows: [dynamic][dynamic]Cell
-
-	for &subtable, i in tables {
-		if element_count(&subtable) == 1 {
-			token := subtable[0][0]
-			append(&json_rows, make([dynamic]Cell))
-			append(
-				&json_rows[len(json_rows) - 1],
-				Cell {
-					scale = false,
-					colspan = num_cols,
-					rowspan = 1,
-					class = "hcentered",
-					tag = "th",
-					text = token.word,
-				},
-			)
-		}
-		fmt.printfln("subtable %v has %v elements", i, element_count(&subtable))
-	}
-	for cells in json_rows {
-		for cell in cells {
-			fmt.println(cell)
-		}
-	}
-	assert(0 == 1)
-
 	{
 		cells: [dynamic]Cell
 		append(
@@ -266,6 +270,32 @@ main :: proc() {
 		)
 		append(&json_rows, cells)
 	}
+
+	// for &subtable, i in tables {
+	// 	if element_count(&subtable) == 1 {
+	// 		token := subtable[0][0]
+	// 		if token.type == .Title {continue}
+	// 		append(&json_rows, make([dynamic]Cell))
+	// 		append(
+	// 			&json_rows[len(json_rows) - 1],
+	// 			Cell {
+	// 				scale = false,
+	// 				colspan = num_cols,
+	// 				rowspan = 1,
+	// 				class = "hcentered",
+	// 				tag = "td",
+	// 				text = token.word,
+	// 			},
+	// 		)
+	// 	}
+	// 	fmt.printfln("subtable %v has %v elements", i, element_count(&subtable))
+	// }
+	// for cells in json_rows {
+	// 	for cell in cells {
+	// 		fmt.println(cell)
+	// 	}
+	// }
+
 
 	for row, i in json_rows {
 		fmt.printfln("row %v:", i)
