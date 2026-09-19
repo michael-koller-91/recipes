@@ -103,6 +103,11 @@ h1 {
     padding-bottom: 1em;
 }
 
+.lcentered {
+    text-align: left;
+    vertical-align: middle;
+}
+
 .hcentered {
     text-align: center;
     vertical-align: middle;

@@ -35,6 +35,7 @@ Cell :: struct {
 	class:   string,
 	tag:     string,
 	text:    string,
+	type:    Token_Type,
 }
 
 clone_trim :: proc(s: string, allocator := context.allocator) -> string {
@@ -51,17 +52,27 @@ element_count :: proc(subtable: ^[dynamic][dynamic]Token) -> (count: int) {
 
 write_cell :: proc(builder: ^strings.Builder, cell: ^Cell) {
 	strings.write_string(builder, fmt.aprintln("      {"))
-	strings.write_string(builder, fmt.aprintfln("        \"scale\": %v", cell.scale))
-	strings.write_string(builder, fmt.aprintfln("        \"colspan\": %v", cell.colspan))
-	strings.write_string(builder, fmt.aprintfln("        \"rowspan\": %v", cell.rowspan))
-	strings.write_string(builder, fmt.aprintfln("        \"class\": \"%v\"", cell.class))
-	strings.write_string(builder, fmt.aprintfln("        \"tag\": \"%v\"", cell.tag))
+	strings.write_string(builder, fmt.aprintfln("        \"scale\": %v,", cell.scale))
+	strings.write_string(builder, fmt.aprintfln("        \"colspan\": %v,", cell.colspan))
+	strings.write_string(builder, fmt.aprintfln("        \"rowspan\": %v,", cell.rowspan))
+	strings.write_string(builder, fmt.aprintfln("        \"class\": \"%v\",", cell.class))
+	strings.write_string(builder, fmt.aprintfln("        \"tag\": \"%v\",", cell.tag))
 	strings.write_string(builder, fmt.aprintfln("        \"text\": \"%v\"", cell.text))
 	strings.write_string(builder, fmt.aprint("      }"))
 }
 
 main :: proc() {
-	filepath := "baked_oats.txt"
+	if len(os.args) != 2 {
+		fmt.printfln("Call the tool like so:\n%v path/to/txt/file", os.args[0])
+		os.exit(0)
+	}
+	filepath := os.args[1]
+	if !os.exists(filepath) {
+		fmt.printfln("The file %v does not exist.", filepath)
+		os.exit(0)
+	}
+	split_r, split_ok := strings.split(filepath, ".")
+	fileout := fmt.aprintf("%v.json", split_r[0])
 
 	file, ok := os.read_entire_file(filepath, context.allocator)
 	defer delete(file)
@@ -77,7 +88,7 @@ main :: proc() {
 	title := true
 	col := 1
 	row := 0
-	fmt.println("---------------------------------------------")
+	fmt.println("\n--------------------------------------------------")
 	for str in strings.split_lines_iterator(&it) {
 		fmt.printfln("%v", str)
 		row += 1
@@ -117,6 +128,7 @@ main :: proc() {
 				} else if word == "-" {
 					defer start = curr + utf8.rune_size('-')
 					type = .Empty
+					word = ""
 				}
 				append(&tokens, Token{word = word, type = type, row = row, col = col})
 
@@ -133,6 +145,7 @@ main :: proc() {
 				} else if word == "-" {
 					defer start = curr + utf8.rune_size('-')
 					type = .Empty
+					word = ""
 				} else {
 					type = .Instruction
 				}
@@ -141,9 +154,9 @@ main :: proc() {
 		}
 		append(&tokens, Token{word = "", type = .EOL, row = row, col = col})
 	}
+	fmt.println("--------------------------------------------------\n")
 	row += 1
 	append(&tokens, Token{word = "", type = .EOF, row = row, col = 1})
-	fmt.println("---------------------------------------------")
 
 	assert(tokens[0].type == .Title) // Sanity check and is assumed in what follows
 
@@ -154,7 +167,7 @@ main :: proc() {
 		num_cols = max(num_cols, token.col)
 	}
 	num_rows := row
-	fmt.printfln("%v rows | %v columns.", num_rows, num_cols)
+	fmt.printfln("%v rows | %v columns.\n", num_rows, num_cols)
 
 	// Keep EOL only when it is used at the end of a row that is not followed by HSep
 	i := 0
@@ -207,14 +220,19 @@ main :: proc() {
 			append(subtable, make([dynamic]Cell))
 			curr_row = &subtable[len(subtable) - 1]
 		} else {
+			class := "hcentered"
+			if token.type == .Ingredient {
+				class = "lcentered"
+			}
 			cell := Cell {
 				render  = true,
 				scale   = token.type == .Ingredient,
 				colspan = 1,
 				rowspan = 1,
-				class   = "hcentered",
+				class   = class,
 				tag     = "td",
 				text    = strings.clone(token.word),
+				type    = token.type,
 			}
 			append(curr_row, cell)
 		}
@@ -238,71 +256,58 @@ main :: proc() {
 		}
 	}
 
-	// TODO: NEXT: loop for-columns, for-rows and check if vertical merging is necessary
+	/* Resolve .Empty and .CopyUp: set render false and increment colspan */
 	for subtable, i in tables {
-		fmt.println()
-		fmt.printfln("subtable %v", i)
-		for row, j in subtable {
-			fmt.printfln("  row %v", j)
-			for col, k in row {
-				fmt.printfln("    col %v", k)
-				fmt.printfln("      %v", col)
+		nrows := len(subtable)
+		ncols := len(subtable[0])
+		if i == 0 {
+			subtable[0][0].tag = "th"
+		}
+		if (nrows == 1) & (ncols == 1) {
+			subtable[0][0].colspan = num_cols
+		}
+		if nrows == 1 {continue}
+
+		for c in 0 ..< ncols {
+			parent_r := 0
+			parent_empty_exists := false
+			for r in 0 ..< nrows {
+				cell := &subtable[r][c]
+				if cell.type == .Instruction {
+					parent_empty_exists = false
+					parent_r = r
+					continue
+				}
+				if cell.type == .CopyUp {
+					assert(r > 0, fmt.aprintfln("Cell\n%v\nhas no cell above it to copy from."))
+					subtable[parent_r][c].rowspan += 1
+					cell.render = false
+					continue
+				}
+				if cell.type == .Empty {
+					if parent_empty_exists {
+						subtable[parent_r][c].rowspan += 1
+						cell.render = false
+					} else {
+						parent_empty_exists = true
+						parent_r = r
+					}
+					continue
+				}
 			}
 		}
 	}
-	assert(1 == 2)
 
-
-	/* Convert tokens to cells */
-	json_rows: [dynamic][dynamic]Cell
-	{
-		cells: [dynamic]Cell
-		append(
-			&cells,
-			Cell {
-				scale = false,
-				colspan = num_cols,
-				rowspan = 1,
-				class = "hcentered",
-				tag = "th",
-				text = tokens[0].word,
-			},
-		)
-		append(&json_rows, cells)
-	}
-
-	// for &subtable, i in tables {
-	// 	if element_count(&subtable) == 1 {
-	// 		token := subtable[0][0]
-	// 		if token.type == .Title {continue}
-	// 		append(&json_rows, make([dynamic]Cell))
-	// 		append(
-	// 			&json_rows[len(json_rows) - 1],
-	// 			Cell {
-	// 				scale = false,
-	// 				colspan = num_cols,
-	// 				rowspan = 1,
-	// 				class = "hcentered",
-	// 				tag = "td",
-	// 				text = token.word,
-	// 			},
-	// 		)
-	// 	}
-	// 	fmt.printfln("subtable %v has %v elements", i, element_count(&subtable))
-	// }
-	// for cells in json_rows {
-	// 	for cell in cells {
-	// 		fmt.println(cell)
+	// Print the table contents for debugging
+	// for subtable, i in tables {
+	// 	for row, j in subtable {
+	// 		fmt.printfln("  row %v", j)
+	// 		for col, k in row {
+	// 			fmt.printfln("    col %v", k)
+	// 			fmt.printfln("      %v", col)
+	// 		}
 	// 	}
 	// }
-
-
-	for row, i in json_rows {
-		fmt.printfln("row %v:", i)
-		for cell in row {
-			fmt.printfln("  %v", cell)
-		}
-	}
 
 	/* Write json file */
 
@@ -315,30 +320,49 @@ main :: proc() {
 	strings.write_string(&builder, "  \"rows\": [\n")
 
 	first_row := true
-	for row in json_rows {
-		if !first_row {
-			strings.write_string(&builder, ",\n")
-		}
-		strings.write_string(&builder, "    [\n")
-
-		first_cell := true
-		for &cell in row {
-			if !first_cell {
+	for subtable in tables {
+		for row in subtable {
+			if !first_row {
 				strings.write_string(&builder, ",\n")
 			}
-			write_cell(&builder, &cell)
-			first_cell = false
-		}
-		strings.write_string(&builder, "\n")
+			strings.write_string(&builder, "    [\n")
 
-		strings.write_string(&builder, "    ]")
-		first_row = false
+			first_cell := true
+			for &cell, k in row {
+				if !cell.render {continue}
+				if !first_cell {
+					strings.write_string(&builder, ",\n")
+				}
+				write_cell(&builder, &cell)
+				first_cell = false
+			}
+			strings.write_string(&builder, "\n")
+
+			strings.write_string(&builder, "    ]")
+			first_row = false
+		}
 	}
 
 	// postamble
-	strings.write_string(&builder, "  \n]")
-	strings.write_string(&builder, "\n}")
+	strings.write_string(&builder, "\n  ]")
+	strings.write_string(&builder, "\n}\n")
 
-	fmt.println("---------------------------------------------")
-	fmt.print(strings.to_string(builder))
+	// For debugging
+	// fmt.println("---------------------------------------------")
+	// fmt.print(strings.to_string(builder))
+
+	if os.exists(fileout) {
+		os.remove(fileout)
+		fmt.println("Removed old", fileout)
+	}
+
+	fileout_handle, err := os.open(fileout, os.O_CREATE | os.O_WRONLY, os.Permissions_Read_All)
+	if err != nil {
+		fmt.eprintln("Could not create file", fileout, ":", err)
+		os.exit(1)
+	}
+	defer os.close(fileout_handle)
+
+	fmt.fprint(fileout_handle, strings.to_string(builder))
+	fmt.println("Wrote", fileout)
 }
